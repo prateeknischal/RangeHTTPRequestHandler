@@ -29,17 +29,17 @@ for the Range header.
 class RangeHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 	"""Simple HTTP request handler with GET and HEAD commands.
 
-    This serves files from the current directory and any of its
-    subdirectories.  The MIME type for files is determined by
-    calling the .guess_type() method.
+		This serves files from the current directory and any of its
+		subdirectories.  The MIME type for files is determined by
+		calling the .guess_type() method.
 
-    The GET and HEAD requests are identical except that the HEAD
-    request omits the actual contents of the file.
+		The GET and HEAD requests are identical except that the HEAD
+		request omits the actual contents of the file.
 
-    """
+		"""
 
 	def do_GET(self):		
-        """Serve a GET request."""
+				"""Serve a GET request."""
 		f, start_range, end_range = self.send_head()
 		print ("Got values of {} and {}".format(start_range, end_range))
 		if f:
@@ -69,7 +69,7 @@ class RangeHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 			f.close()
 
 	def do_HEAD(self):
-        """Serve a HEAD request."""
+				"""Serve a HEAD request."""
 		f, start_range, end_range = self.send_head()
 		if f:
 			f.close()
@@ -77,14 +77,14 @@ class RangeHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 	def send_head(self):
 		"""Common code for GET and HEAD commands.
 
-        This sends the response code and MIME headers.
+				This sends the response code and MIME headers.
 
-        Return value is either a file object (which has to be copied
-        to the outputfile by the caller unless the command was HEAD,
-        and must be closed by the caller under all circumstances), or
-        None, in which case the caller has nothing further to do.
+				Return value is either a file object (which has to be copied
+				to the outputfile by the caller unless the command was HEAD,
+				and must be closed by the caller under all circumstances), or
+				None, in which case the caller has nothing further to do.
 
-        """
+				"""
 		path = self.translate_path(self.path)
 		f = None
 		if os.path.isdir(path):
@@ -145,13 +145,13 @@ class RangeHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 	def translate_path(self, path):
 		"""Translate a /-separated PATH to the local filename syntax.
 
-        Components that mean special things to the local file system
-        (e.g. drive or directory names) are ignored.  (XXX They should
-        probably be diagnosed.)
+				Components that mean special things to the local file system
+				(e.g. drive or directory names) are ignored.  (XXX They should
+				probably be diagnosed.)
 
-        """
+				"""
 
-        #abandon query parameters
+				#abandon query parameters
 		path = path.split("?", 1)[0]
 		path = path.split("#", 1)[0]
 		path = posixpath.normpath(urllib.parse.unquote(path))
@@ -172,11 +172,11 @@ class RangeHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 	def list_directory(self, path):
 		"""Helper to produce a directory listing (absent index.html).
 
-        Return value is either a file object, or None (indicating an
-        error).  In either case, the headers are sent, making the
-        interface the same as for send_head().
+				Return value is either a file object, or None (indicating an
+				error).  In either case, the headers are sent, making the
+				interface the same as for send_head().
 
-        """
+				"""
 		try:
 			lst = os.listdir(path)
 		except OSError:
@@ -220,17 +220,17 @@ class RangeHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 	def guess_type(self, path):
 		"""Guess the type of a file.
 
-        Argument is a PATH (a filename).
+				Argument is a PATH (a filename).
 
-        Return value is a string of the form type/subtype,
-        usable for a MIME Content-type header.
+				Return value is a string of the form type/subtype,
+				usable for a MIME Content-type header.
 
-        The default implementation looks the file's extension
-        up in the table self.extensions_map, using application/octet-stream
-        as a default; however it would be permissible (if
-        slow) to look inside the data to make a better guess.
+				The default implementation looks the file's extension
+				up in the table self.extensions_map, using application/octet-stream
+				as a default; however it would be permissible (if
+				slow) to look inside the data to make a better guess.
 
-        """
+				"""
 		base, ext = posixpath.splitext(path)
 		if ext in self.extension_map:
 			return self.extension_map[ext]
