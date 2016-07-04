@@ -39,7 +39,7 @@ class RangeHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 		"""
 
 	def do_GET(self):		
-				"""Serve a GET request."""
+		"""Serve a GET request."""
 		f, start_range, end_range = self.send_head()
 		print ("Got values of {} and {}".format(start_range, end_range))
 		if f:
@@ -69,7 +69,7 @@ class RangeHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 			f.close()
 
 	def do_HEAD(self):
-				"""Serve a HEAD request."""
+		"""Serve a HEAD request."""
 		f, start_range, end_range = self.send_head()
 		if f:
 			f.close()
@@ -151,7 +151,7 @@ class RangeHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
 				"""
 
-				#abandon query parameters
+		#abandon query parameters
 		path = path.split("?", 1)[0]
 		path = path.split("#", 1)[0]
 		path = posixpath.normpath(urllib.parse.unquote(path))
