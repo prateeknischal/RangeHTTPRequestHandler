@@ -15,8 +15,7 @@ import urllib.parse
 import html
 import shutil
 import mimetypes
-import io   #Python 3 import for StringIO
-import _io  #for type checking
+import io   #Python 3 import for BytesIO
 
 """Range HTTP Server.
 
@@ -47,21 +46,10 @@ class RangeHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 			chunk = 1024 * 4 #chunk = 4KB
 			block_size = end_range - start_range #the size of partial content
 
-			# Python 3 does not allow streams that are of type
-			# string. the StringIO module is replaced by io.StringIO
-			# the io.StringIO requires a utf-8 encoding and the file 
-			# object as opened in binary mode is already compatible
-			# to differentiate between the StringIO object and file object 
-			# this comparision is used
-			ok = (type(f) == _io.StringIO)
-
 			while block_size > 0:
 				try:
 					read_size = min(chunk, block_size)
-					if not ok:
-						self.wfile.write(f.read(read_size))
-					else:
-						self.wfile.write(bytes(f.read(read_size), "utf-8"))
+					self.wfile.write(f.read(read_size))
 					block_size -= read_size
 				except Exception as e:
 					print (e)
@@ -184,13 +172,13 @@ class RangeHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 			return None
 
 		lst.sort(key=lambda file_name : file_name.lower())
-		html_text = io.StringIO()
+		html_text = []
 
 		displaypath = html.escape(urllib.parse.unquote(self.path))
-		html_text.write('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
-		html_text.write("<html>\n<title>Directory listing for {}</title>\n".format(displaypath))
-		html_text.write("<body>\n<h2>Directory listing for {}</h2>\n".format(displaypath))
-		html_text.write("<hr>\n<ul>\n")
+		html_text.append('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
+		html_text.append("<html>\n<title>Directory listing for {}</title>\n".format(displaypath))
+		html_text.append("<body>\n<h2>Directory listing for {}</h2>\n".format(displaypath))
+		html_text.append("<hr>\n<ul>\n")
 
 		for name in lst:
 			fullname = os.path.join(path, name)
@@ -205,17 +193,21 @@ class RangeHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
 			html_text.write('<li><a href = "{}">{}</a>\n'.format(urllib.parse.quote(linkname), html.escape(displayname)))
 
-		html_text.write('</ul>\n</hr>\n</body>\n</html>\n')
-		length = html_text.tell()
+		html_text.append('</ul>\n</hr>\n</body>\n</html>\n')
 
-		html_text.seek(0)
+		byte_encoded_string = "\n".join(r).encode("utf-8", "surrogateescape")
+		f = io.BytesIO()
+		f.write(byte_encoded_string)
+		length = len(byte_encoded_string)
+
+		f.seek(0)
 
 		self.send_response(200)
 		self.send_header("Content-type", "text/html")
 		self.send_header("Content-length", str(length))
 		self.end_headers()
 
-		return (html_text, 0, length)
+		return (f, 0, length)
 
 	def guess_type(self, path):
 		"""Guess the type of a file.
