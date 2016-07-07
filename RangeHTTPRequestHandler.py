@@ -192,11 +192,11 @@ class RangeHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 			if os.path.islink(fullname):
 				displayname = name + "@"
 
-			html_text.write('<li><a href = "{}">{}</a>\n'.format(urllib.parse.quote(linkname), html.escape(displayname)))
+			html_text.append('<li><a href = "{}">{}</a>\n'.format(urllib.parse.quote(linkname), html.escape(displayname)))
 
 		html_text.append('</ul>\n</hr>\n</body>\n</html>\n')
 
-		byte_encoded_string = "\n".join(r).encode("utf-8", "surrogateescape")
+		byte_encoded_string = "\n".join(html_text).encode("utf-8", "surrogateescape")
 		f = io.BytesIO()
 		f.write(byte_encoded_string)
 		length = len(byte_encoded_string)
