@@ -54,8 +54,7 @@ class RangeHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 				except Exception as e:
 					print (e)
 					break
-				finally:
-					f.close()
+			f.close()
 
 	def do_HEAD(self):
 		"""Serve a HEAD request."""
