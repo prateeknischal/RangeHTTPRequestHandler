@@ -253,5 +253,10 @@ def test(handler_class = RangeHTTPRequestHandler,server_class = http.server.HTTP
 	http.server.test(handler_class, server_class)
 	
 if __name__ == "__main__":
-	httpd = http.server.HTTPServer(("localhost", 9999), RangeHTTPRequestHandler)
+	import sys
+	port = 8000
+	if (len(sys.argv) > 1): 
+		port = int(sys.argv[1])
+	httpd = http.server.HTTPServer(("0.0.0.0", port), RangeHTTPRequestHandler)
+	print("Serving on port : {}".format(port))
 	httpd.serve_forever()
